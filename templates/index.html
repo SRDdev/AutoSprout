@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soil Moisture Sensor</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/styles.css">
+</head>
+<body style="background-image: url('../static/images/background.jpg'); background-size: cover;">
+    <div class="container">
+        <div class="content">
+            <h1>Soil Moisture</h1>
+            <div id="sensor-value">Sensor Value: <span id="sensor-value-span">{{ sensor_value }}</span></div>
+            <div id="counter">Time (s): <span id="counter-value">{{ internal_counter }}</span></div>
+        </div>
+    </div>
+    <script>
+        function updateValues() {
+            fetch('/get_sensor_value')
+            .then(response => response.text())
+            .then(sensorData => {
+                document.getElementById('sensor-value-span').innerText = sensorData;
+            });
+
+            fetch('/get_counter')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('counter-value').innerText = data.internal_counter;
+            });
+        }
+        setInterval(updateValues, 1000);
+        updateValues();
+    </script>
+</body>
+</html>
