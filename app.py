@@ -1,8 +1,10 @@
 from flask import Flask, request, render_template, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import sqlite3
+import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'  # SQLite database
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///new.db'
 db = SQLAlchemy(app)
 
 class CounterLog(db.Model):
@@ -15,6 +17,47 @@ with app.app_context():
 
 # Internal counter variable
 internal_counter = 0
+
+def get_table_names():
+    table_names = []
+    # Check if the database file exists
+    if not os.path.exists('instance/new.db'):
+        print("Error: Database file 'data.db' not found.")
+        return table_names
+
+    try:
+        # Connect to the database
+        conn = sqlite3.connect('instance/new.db')
+        cursor = conn.cursor()
+
+        # Execute a query to get the names of all tables
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+
+        # Fetch all rows from the result set
+        rows = cursor.fetchall()
+
+        # Extract table names
+        for row in rows:
+            table_names.append(row[0])  # Table names are in the first column
+
+    except sqlite3.OperationalError as e:
+        print(f"Error: {e}")
+
+    finally:
+        # Close the cursor and connection
+        if 'cursor' in locals():
+            cursor.close()
+        if 'conn' in locals():
+            conn.close()
+
+    return table_names
+
+@app.route('/tables')
+def display_tables():
+    logs = CounterLog.query.all()
+    tables = get_table_names()
+    # Render the template with table names
+    return render_template('database.html', logs=logs)
 
 @app.route('/', methods=['POST'])
 def update_counter():

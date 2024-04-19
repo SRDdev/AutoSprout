@@ -12,6 +12,15 @@
             <h1>Soil Moisture</h1>
             <div id="sensor-value">Sensor Value: <span id="sensor-value-span">{{ sensor_value }}</span></div>
             <div id="counter">Time (s): <span id="counter-value">{{ internal_counter }}</span></div>
+            <!-- Add link to show database -->
+           <br><br>
+           <div class= "click_button" style="border-radius: 2rem; overflow: hidden;">
+            <a href="/tables" style="display: block; padding: 15px 25px; color: white; background-color: black; text-decoration: none; text-align: center; transition: background-color 0.3s, transform 0.3s;">
+                Show Database
+            </a>
+            </div>
+           
+           <br><br>
         </div>
     </div>
     <script>
